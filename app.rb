@@ -3,12 +3,13 @@ require('sinatra/reloader')
 require("sinatra/activerecord")
 require('./lib/division')
 require('./lib/employee')
+require('./lib/project')
 also_reload('lib/**/*.rb')
-require('pg')
 
 get('/') do
   @divisions = Division.all()
   @all_employees = Employee.all()
+  @all_projects = Project.all()
   erb(:index)
 end
 
@@ -16,6 +17,7 @@ post('/') do
   Division.create({:name => params.fetch("name")})
   @divisions = Division.all()
   @all_employees = Employee.all()
+  @all_projects = Project.all()
   erb(:index)
 end
 
@@ -33,9 +35,10 @@ end
 
 delete('/') do
   @division = Division.find(params.fetch("id").to_i)
-  @division.delete()
-  @divisions = Division.all()
-  @all_employees = Employee.all()
+  @division.delete
+  @divisions = Division.all
+  @all_employees = Employee.all
+  @all_projects = Project.all
   erb(:index)
 end
 
@@ -44,4 +47,16 @@ patch('/division/:id/employee') do
   @division.employees.new({:name => params.fetch("employee_name")})
   @division.save()
   erb(:division)
+end
+
+get('/employee/:id') do
+  erb(:employee)
+end
+
+post('/project/new') do
+  Project.create({:description => params.fetch("description")})
+  @divisions = Division.all()
+  @all_employees = Employee.all()
+  @all_projects = Project.all()
+  erb(:index)
 end
